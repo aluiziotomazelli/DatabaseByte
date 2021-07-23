@@ -72,21 +72,21 @@ void DatabaseByte::update() {
 		}
 	}
 	uint8_t now = floatToByte(*actual);		// take the actual reading and transform in a byte
-	max = getData(MAX);						// read the MAX value from the database
-	if (now > max) {						// if actual is bigger
-		max = now;							// MAX is equal to actual
-		database[0] = max;					// store the data
+	max = getData(MAX);				// read the MAX value from the database
+	if (now > max) {				// if actual is bigger
+		max = now;			        // MAX is equal to actual
+		database[0] = max;			// store the data
 	}
 
-	min = getData(MIN);						// the same for MIN value
+	min = getData(MIN);				// the same for MIN value
 	if (now < min) {
 		min = now;
 		database[0] = min;
 	}
 
-	if (timeWasElapsed()) {					// if time was elapsed
-		rightShift();						// shift the array one position to the right
-		database[0] = now;					// store the actual value on position [0]
+	if (timeWasElapsed()) {				// if time was elapsed
+		rightShift();				// shift the array one position to the right
+		database[0] = now;			// store the actual value on position [0]
 	}
 }
 
@@ -98,19 +98,19 @@ void DatabaseByte::update() {
  * @return - a float with the max or min value
  */
 uint8_t DatabaseByte::getData(MinOrMax min_max) {
-	uint8_t result = database[0];					// take the last stored data
+	uint8_t result = database[0];				// take the last stored data
 	if (min_max == MIN) {
 		for (int i = 1; i < numberSamples; ++i) {	// run the entire array
-			if (database[i] < result)				// if a value is less than the first
-				result = database[i];				// save the value
+			if (database[i] < result)		// if a value is less than the first
+				result = database[i];		// save the value
 		}
-	} else if (min_max == MAX) {					//the same for MAX value
+	} else if (min_max == MAX) {				//the same for MAX value
 		for (int i = 1; i < numberSamples; ++i) {
-			if (database[i] > result)				// if a value is bigger the actual
-				result = database[i];				// save the value
+			if (database[i] > result)		// if a value is bigger the actual
+				result = database[i];		// save the value
 		}
 	}
-	return result;									// return the result
+	return result;						// return the result
 }
 
 /**
