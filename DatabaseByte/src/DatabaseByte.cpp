@@ -60,29 +60,33 @@ void DatabaseByte::setIntervalSamples(unsigned long interval, int numberSamples)
  * 			register the values internally.
  */
 void DatabaseByte::update() {
+	/**
+	 *	The MIN value will be 0 in the first run along the period time, until
+	 *	the database dont store all position of the array. To prevent this,
+	 *	in the first run, the actual value is stored in all positions.
+	 */
 	if (isFirst) {
 		for (int i = 0; i < numberSamples; ++i) {
 			database[i] = floatToByte(*actual);
 			isFirst = false;
 		}
 	}
-
-	uint8_t now = floatToByte(*actual);
-	max = getData(MAX);
-	if (now > max) {
-		max = now;
-		database[0] = max;
+	uint8_t now = floatToByte(*actual);		// take the actual reading and transform in a byte
+	max = getData(MAX);						// read the MAX value from the database
+	if (now > max) {						// if actual is bigger
+		max = now;							// MAX is equal to actual
+		database[0] = max;					// store the data
 	}
 
-	min = getData(MIN);
+	min = getData(MIN);						// the same for MIN value
 	if (now < min) {
 		min = now;
 		database[0] = min;
 	}
 
-	if (timeWasElapsed()) {
-		rightShift();
-		database[0] = now;
+	if (timeWasElapsed()) {					// if time was elapsed
+		rightShift();						// shift the array one position to the right
+		database[0] = now;					// store the actual value on position [0]
 	}
 }
 
@@ -94,19 +98,19 @@ void DatabaseByte::update() {
  * @return - a float with the max or min value
  */
 uint8_t DatabaseByte::getData(MinOrMax min_max) {
-	uint8_t result = database[0];
+	uint8_t result = database[0];					// take the last stored data
 	if (min_max == MIN) {
-		for (int i = 0; i < numberSamples; ++i) {
-			if (database[i] < result)
-				result = database[i];
+		for (int i = 1; i < numberSamples; ++i) {	// run the entire array
+			if (database[i] < result)				// if a value is less than the first
+				result = database[i];				// save the value
 		}
-	} else if (min_max == MAX) {
-		for (int i = 0; i < numberSamples; ++i) {
-			if (database[i] > result)
-				result = database[i];
+	} else if (min_max == MAX) {					//the same for MAX value
+		for (int i = 1; i < numberSamples; ++i) {
+			if (database[i] > result)				// if a value is bigger the actual
+				result = database[i];				// save the value
 		}
 	}
-	return result;
+	return result;									// return the result
 }
 
 /**
@@ -123,7 +127,7 @@ bool DatabaseByte::timeWasElapsed() {
 }
 
 /**
- *  Do a right shift in the array, so that the newer data recorded will
+ *  Do a right shift on the array, so that the newer data recorded will
  *  	stay always in the array[0]
  */
 void DatabaseByte::rightShift() {
@@ -131,7 +135,6 @@ void DatabaseByte::rightShift() {
 		database[i] = database[i - 1];
 	}
 }
-
 
 /**
  *

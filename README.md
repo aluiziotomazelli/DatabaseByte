@@ -9,7 +9,7 @@ This library does that, the input and output data can be float type, but the sto
 
 In small ranges, it can provide a good resolution, even with the data being internally recorded in 8 bits, it can provide fractional values if a small range is used.
 
-The example BME280 sketch store temperature and humidity taken from a BME280 sensor. But this can easelly changed to store a value of a other sensor from analogRead().
+The example sketch store temperature and humidity taken from a BME280 sensor. But this can easelly changed to store a value of a other sensor from analogRead().
 
 
 ------------------------------------------------------------
